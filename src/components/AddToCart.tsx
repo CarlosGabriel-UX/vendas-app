@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/store/cartStore";
+import { useCartStore } from "@/store/cartStore";
 import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 
@@ -14,15 +14,14 @@ interface AddToCartProps {
 }
 
 export default function AddToCart({ product }: AddToCartProps) {
-  const addToCart = useCart((state) => state.addToCart);
+  const addItem = useCartStore((state) => state.addItem);
 
   const handleAdd = () => {
-    addToCart({
+    addItem({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image,
-      quantity: 1
+      image: product.image
     });
     toast.success("Adicionado ao carrinho!");
   };
