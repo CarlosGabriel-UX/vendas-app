@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AddToCartButton from "@/components/AddToCartButton"; // Vou criar este componente client-side separado
+import AddToCart from "@/components/AddToCart";
 import { Star, Truck, ShieldCheck, Heart, Share2 } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
@@ -102,7 +102,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
             </div>
 
             {/* Botão de Adicionar ao Carrinho (Client Component) */}
-            <AddToCartButton product={{
+            <AddToCart product={{
               id: displayProduct.id,
               name: displayProduct.name,
               price: displayProduct.price,
