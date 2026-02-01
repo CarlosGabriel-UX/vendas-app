@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'; // Força atualização a cada refresh
+export const revalidate = 0;
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
@@ -16,7 +19,15 @@ async function getProducts(search?: string) {
     query = query.ilike('name', `%${search}%`);
   }
 
-  const { data: products } = await query;
+  const { data: products, error } = await query;
+  
+  if (error) {
+    console.error("❌ ERRO AO BUSCAR PRODUTOS:", error.message);
+  } else {
+    console.log("✅ PRODUTOS ENCONTRADOS:", products?.length);
+    if (products?.length === 0) console.log("⚠️ A busca retornou 0 itens. Verifique RLS ou filtros.");
+  }
+
   return products || [];
 }
 
