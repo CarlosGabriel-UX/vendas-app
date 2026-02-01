@@ -5,6 +5,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   typescript: {
+    // ⚠️ Perigo: Ignora erros de tipo para forçar o deploy
     ignoreBuildErrors: true,
   },
   images: {
