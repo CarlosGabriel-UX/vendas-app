@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Lock, Mail, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"; // Cliente correto para Auth
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,6 +12,9 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  
+  // Criar o cliente Supabase que gerencia cookies automaticamente
+  const supabase = createClientComponentClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,12 +29,14 @@ export default function LoginPage() {
 
       if (signInError) throw signInError;
 
+      // Força um refresh no router para atualizar os cookies no servidor
+      router.refresh();
+
       // Login com sucesso
-      // Redireciona para o admin se for email de vendedor (lógica simples por enquanto)
-      if (email.includes("admin")) {
+      if (email === 'carlosgabriel8058@gmail.com') {
         router.push("/admin/dashboard");
       } else {
-        router.push("/");
+        router.push("/minha-conta/pedidos"); // Redireciona para pedidos para testar
       }
     } catch (err: any) {
       console.error("Erro no login:", err);
