@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   swcMinify: true,
+  transpilePackages: ['@supabase/auth-helpers-nextjs'], // Força transpilação
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // ⚠️ Perigo: Ignora erros de tipo para forçar o deploy
     ignoreBuildErrors: true,
   },
   images: {
@@ -13,7 +13,8 @@ const nextConfig = {
       'images.unsplash.com', 
       'i.imgur.com', 
       'upload.wikimedia.org',
-      'via.placeholder.com'
+      'via.placeholder.com',
+      'bckvvrafdncagsbjyhhj.supabase.co' // Adicionei seu domínio do Supabase
     ],
   }
 };
