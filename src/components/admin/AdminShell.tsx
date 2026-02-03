@@ -3,12 +3,14 @@
 import AdminSidebar from "@/components/admin/Sidebar";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
+    <ProtectedRoute adminOnly>
+      <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
@@ -46,5 +48,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

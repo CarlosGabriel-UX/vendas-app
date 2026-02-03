@@ -1,24 +1,12 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ProtectedRoute from "@/components/ProtectedRoute"; // Vou criar este componente
 
 export const dynamic = "force-dynamic";
 
-export default async function AccountLayout({ children }: { children: React.ReactNode }) {
-  try {
-    const supabase = createServerComponentClient({ cookies });
-    
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session) {
-      redirect("/login");
-    }
-
-    return (
+export default function AccountLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <ProtectedRoute>
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Navbar />
         <main className="flex-grow container mx-auto px-4 py-8">
@@ -26,12 +14,6 @@ export default async function AccountLayout({ children }: { children: React.Reac
         </main>
         <Footer />
       </div>
-    );
-  } catch (error) {
-    console.error("Erro no AccountLayout:", error);
-    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
-      throw error;
-    }
-    redirect("/login");
-  }
+    </ProtectedRoute>
+  );
 }
