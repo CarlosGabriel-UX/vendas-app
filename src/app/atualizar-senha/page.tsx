@@ -3,7 +3,7 @@
 import { Lock, ArrowRight, CheckCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { supabase } from "@/lib/supabase"; // Cliente padrão
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,6 @@ export default function UpdatePasswordPage() {
   useEffect(() => {
     const checkSession = async () => {
       // Instancia aqui dentro para não quebrar o build
-      const supabase = createClientComponentClient();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         // Se não tiver sessão, o link expirou ou é inválido
@@ -48,8 +47,6 @@ export default function UpdatePasswordPage() {
     }
 
     try {
-      // Instancia aqui dentro também
-      const supabase = createClientComponentClient();
       const { error } = await supabase.auth.updateUser({
         password: password
       });

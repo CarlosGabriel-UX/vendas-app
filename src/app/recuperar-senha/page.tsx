@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Mail, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import { useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { supabase } from "@/lib/supabase"; // Cliente padrão (sem auth-helpers)
 
 export const dynamic = "force-dynamic";
 
@@ -19,8 +19,6 @@ export default function RecoverPasswordPage() {
     setError(null);
 
     try {
-      const supabase = createClientComponentClient();
-      
       // URL para onde o usuário será redirecionado após clicar no email
       // Importante: Essa URL deve ser permitida no painel do Supabase (Authentication > URL Configuration)
       const redirectTo = `${window.location.origin}/atualizar-senha`;
