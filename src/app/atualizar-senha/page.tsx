@@ -15,11 +15,12 @@ export default function UpdatePasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const supabase = createClientComponentClient();
 
   // Verifica se o usuário chegou aqui autenticado (via link mágico do email)
   useEffect(() => {
     const checkSession = async () => {
+      // Instancia aqui dentro para não quebrar o build
+      const supabase = createClientComponentClient();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         // Se não tiver sessão, o link expirou ou é inválido
@@ -27,7 +28,7 @@ export default function UpdatePasswordPage() {
       }
     };
     checkSession();
-  }, [supabase]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +48,8 @@ export default function UpdatePasswordPage() {
     }
 
     try {
+      // Instancia aqui dentro também
+      const supabase = createClientComponentClient();
       const { error } = await supabase.auth.updateUser({
         password: password
       });
