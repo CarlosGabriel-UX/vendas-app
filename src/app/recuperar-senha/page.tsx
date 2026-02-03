@@ -29,12 +29,16 @@ export default function RecoverPasswordPage() {
         redirectTo,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro detalhado do Supabase:", error);
+        throw error;
+      }
 
       setIsSuccess(true);
     } catch (err: any) {
       console.error("Erro ao enviar email:", err);
-      setError("Ocorreu um erro ao tentar enviar o email. Tente novamente.");
+      // Mostra a mensagem real do erro se disponível
+      setError(err.message || "Ocorreu um erro ao tentar enviar o email. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
