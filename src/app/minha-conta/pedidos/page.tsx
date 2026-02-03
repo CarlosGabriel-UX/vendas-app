@@ -1,7 +1,5 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
@@ -60,16 +58,13 @@ export default function MyOrdersPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Navbar />
-      
-      <main className="flex-grow container mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
-          <Package className="w-8 h-8 text-blue-600" />
-          Meus Pedidos
-        </h1>
+    <>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+        <Package className="w-8 h-8 text-blue-600" />
+        Meus Pedidos
+      </h1>
 
-        {loading ? (
+      {loading ? (
           <div className="text-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <p className="text-gray-500">Carregando seus pedidos...</p>
@@ -119,9 +114,6 @@ export default function MyOrdersPage() {
             ))}
           </div>
         )}
-      </main>
-
-      <Footer />
-    </div>
+    </>
   );
 }

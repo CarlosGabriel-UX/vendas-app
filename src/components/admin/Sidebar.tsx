@@ -1,7 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import { LayoutDashboard, Package, ShoppingCart, Users, Settings, LogOut } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function AdminSidebar() {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  };
+
   return (
     <aside className="w-64 bg-slate-900 text-white min-h-screen flex flex-col fixed left-0 top-0">
       <div className="p-6 border-b border-slate-800">
@@ -37,7 +49,10 @@ export default function AdminSidebar() {
       </nav>
 
       <div className="p-4 border-t border-slate-800">
-        <button className="flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-900/20 w-full rounded-lg transition">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-900/20 w-full rounded-lg transition"
+        >
           <LogOut className="w-5 h-5" />
           Sair
         </button>
