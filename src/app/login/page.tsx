@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Lock, Mail, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"; // Cliente correto para Auth
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
+// Forçar renderização dinâmica para evitar erro de prerender
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
@@ -14,16 +15,19 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  
-  // Criar o cliente Supabase que gerencia cookies automaticamente
-  const supabase = createClientComponentClient();
 
+  // Instanciar o cliente APENAS quando for usar (dentro do handler)
+  // ou usar uma referência lazy, mas vamos simplificar instanciando no submit.
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
     
     try {
+      // Cria o cliente aqui dentro, onde é seguro (Browser only)
+      const supabase = createClientComponentClient();
+
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -31,14 +35,12 @@ export default function LoginPage() {
 
       if (signInError) throw signInError;
 
-      // Força um refresh no router para atualizar os cookies no servidor
       router.refresh();
 
-      // Login com sucesso
       if (email === 'carlosgabriel8058@gmail.com') {
         router.push("/admin/dashboard");
       } else {
-        router.push("/minha-conta/pedidos"); // Redireciona para pedidos para testar
+        router.push("/minha-conta/pedidos");
       }
     } catch (err: any) {
       console.error("Erro no login:", err);
