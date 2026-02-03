@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Lock, Mail, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { supabase } from "@/lib/supabase"; // Cliente padrão seguro
 
 // Forçar renderização dinâmica para evitar erro de prerender
 export const dynamic = "force-dynamic";
@@ -25,9 +25,7 @@ export default function LoginPage() {
     setError(null);
     
     try {
-      // Cria o cliente aqui dentro, onde é seguro (Browser only)
-      const supabase = createClientComponentClient();
-
+      // Usando cliente padrão importado
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
