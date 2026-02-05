@@ -10,6 +10,7 @@ import { toast } from "sonner";
 export default function NewProductPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -18,6 +19,37 @@ export default function NewProductPage() {
     stock: "",
     image_url: ""
   });
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const file = e.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('products')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage.from('products').getPublicUrl(filePath);
+      
+      setFormData({ ...formData, image_url: data.publicUrl });
+      toast.success("Imagem enviada com sucesso!");
+    } catch (error: any) {
+      toast.error("Erro ao enviar imagem: " + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,8 +170,41 @@ export default function NewProductPage() {
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">URL da Imagem</label>
-              <div className="flex gap-2">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Imagem do Produto</label>
+              
+              {/* Upload Input */}
+              <div className="mb-4">
+                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600 transition">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    {uploading ? (
+                      <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-2" />
+                    ) : (
+                      <Upload className="w-8 h-8 text-gray-500 dark:text-gray-400 mb-2" />
+                    )}
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {uploading ? "Enviando..." : "Clique para fazer upload"}
+                    </p>
+                  </div>
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                  />
+                </label>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-gray-300 dark:border-slate-600" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white dark:bg-slate-800 px-2 text-gray-500">Ou use uma URL</span>
+                </div>
+              </div>
+
+              <div className="mt-4">
                 <input 
                   type="text" 
                   className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
@@ -148,17 +213,15 @@ export default function NewProductPage() {
                   onChange={(e) => setFormData({...formData, image_url: e.target.value})}
                 />
               </div>
-              <p className="text-xs text-gray-400 mt-1">Cole um link direto de uma imagem (Unsplash, Imgur, etc)</p>
             </div>
 
             {/* Preview da Imagem */}
-            <div className="aspect-square bg-gray-50 dark:bg-slate-900 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-xl flex items-center justify-center overflow-hidden">
+            <div className="aspect-square bg-gray-50 dark:bg-slate-900 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-xl flex items-center justify-center overflow-hidden relative">
               {formData.image_url ? (
                 <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = "https://via.placeholder.com/400?text=Erro+na+Imagem")} />
               ) : (
                 <div className="text-center text-gray-400 dark:text-slate-600">
-                  <Upload className="w-10 h-10 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">Preview da imagem</p>
+                  <p className="text-sm">Nenhuma imagem selecionada</p>
                 </div>
               )}
             </div>
